@@ -138,6 +138,10 @@ public class MapGraph {
         return bfs(start, goal, temp);
 	}
 	
+	private Set<MapNode> getNeighbors(MapNode node){
+		return node.getNeighbors();
+	}
+	
 	/** Find the path from start to goal using breadth first search
 	 * 
 	 * @param start The starting location
@@ -165,12 +169,52 @@ public class MapGraph {
 		HashMap<MapNode,MapNode> parentMap = new HashMap<MapNode,MapNode>();
 		Queue<MapNode> toExplore = new LinkedList<MapNode>();
 		HashSet<MapNode> visited = new HashSet<MapNode>();
-		// Hook for visualization.  See writeup.
-		//nodeSearched.accept(next.getLocation());
-
-		return null;
+		
+		toExplore.add(startNode);
+		
+		MapNode next = null;
+		
+		while(!toExplore.isEmpty()){
+			
+			next = toExplore.remove();
+			
+			// Hook for visualization.  See write up.
+			nodeSearched.accept(next.getLocation());
+			if (next.equals(endNode))break;
+			
+			Set<MapNode> neighbors = getNeighbors(next);
+			for (MapNode neighbor : neighbors){
+				if(!visited.contains(neighbor)){
+					visited.add(neighbor);
+					parentMap.put(neighbor, next);
+					toExplore.add(neighbor);
+				}
+			}
+			
+		}
+		if (!next.equals(endNode)){
+			return null;
+		}
+		
+		// Reconstruct the path now
+		List<GeographicPoint> path = reconstructPath(parentMap,startNode,endNode);
+		return path;
+		
 	}
 	
+	private List<GeographicPoint> reconstructPath(HashMap<MapNode,MapNode> parentMap, MapNode start, MapNode goal){
+		LinkedList<GeographicPoint> path = new LinkedList<GeographicPoint>();
+		MapNode current = goal;
+
+		while (!current.equals(start)) {
+			path.addFirst(current.getLocation());
+			current = parentMap.get(current);
+		}
+
+		// add start
+		path.addFirst(start.getLocation());
+		return path;
+	}
 
 	/** Find the path from start to goal using Dijkstra's algorithm
 	 * 
