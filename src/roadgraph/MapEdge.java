@@ -1,0 +1,5 @@
+package roadgraph;
+
+class MapEdge {
+
+}
