@@ -10,13 +10,15 @@ package roadgraph;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import java.util.function.Consumer;
 
 import geography.GeographicPoint;
 import util.GraphLoader;
-
+import roadgraph.MapEdge;
 /**
  * @author UCSD MOOC development team and YOU
  * 
@@ -46,7 +48,7 @@ public class MapGraph {
 	public int getNumVertices()
 	{
 		//TODO: Implement this method in WEEK 2
-		return 0;
+		return pointNodeMap.size();
 	}
 	
 	/**
@@ -56,7 +58,7 @@ public class MapGraph {
 	public Set<GeographicPoint> getVertices()
 	{
 		//TODO: Implement this method in WEEK 2
-		return null;
+		return pointNodeMap.keySet();
 	}
 	
 	/**
@@ -66,7 +68,7 @@ public class MapGraph {
 	public int getNumEdges()
 	{
 		//TODO: Implement this method in WEEK 2
-		return 0;
+		return edges.size();
 	}
 
 	
@@ -81,6 +83,15 @@ public class MapGraph {
 	public boolean addVertex(GeographicPoint location)
 	{
 		// TODO: Implement this method in WEEK 2
+		MapNode node = pointNodeMap.get(location);
+		if (node == null){
+			node = new MapNode(location);
+			pointNodeMap.put(location, node);
+			return true;
+		}
+		else{
+			System.out.println("Node already exists!!");
+		}
 		return false;
 	}
 	
@@ -100,6 +111,16 @@ public class MapGraph {
 			String roadType, double length) throws IllegalArgumentException {
 
 		//TODO: Implement this method in WEEK 2
+		MapNode start = pointNodeMap.get(from);
+		MapNode end = pointNodeMap.get(to);
+		if (start == null || end == null || length < 0){
+			throw new IllegalArgumentException("Node not available!!");
+		}
+		else{
+			MapEdge edge = new MapEdge(roadName,roadType,start,end,length);
+			edges.add(edge);
+			start.addEdge(edge);
+		}
 		
 	}
 	
@@ -130,6 +151,20 @@ public class MapGraph {
 	{
 		// TODO: Implement this method in WEEK 2
 		
+		// Setup for initialization and check validity if inputs
+		if (start == null || goal == null){
+			throw new NullPointerException("Cannot find node for gv=iven point!");
+		}
+		MapNode startNode = pointNodeMap.get(start);
+		MapNode endNode = pointNodeMap.get(goal);
+		if (startNode == null || endNode == null){
+			return null;
+		}
+		
+		// Setup to begin bfs
+		HashMap<MapNode,MapNode> parentMap = new HashMap<MapNode,MapNode>();
+		Queue<MapNode> toExplore = new LinkedList<MapNode>();
+		HashSet<MapNode> visited = new HashSet<MapNode>();
 		// Hook for visualization.  See writeup.
 		//nodeSearched.accept(next.getLocation());
 

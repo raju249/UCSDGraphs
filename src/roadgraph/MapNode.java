@@ -39,7 +39,16 @@ class MapNode {
 	public Set<MapEdge> getEdges(){
 		return edges;
 	}
-	
+
+	// @return set of neighbors for this node
+	public Set<MapNode>getNeighbors(){
+		
+		Set<MapNode> neighbors = new HashSet<MapNode>();
+		for (MapEdge edge: edges){
+			neighbors.add(edge.getOtherNode(this));
+		}
+		return neighbors;
+	}
 	// method to compare if two nodes are equal or not
 	public boolean equals(Object o){
 		
