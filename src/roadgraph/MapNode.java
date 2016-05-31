@@ -5,7 +5,7 @@ import java.util.Set;
 
 import geography.GeographicPoint;
 
-class MapNode {
+class MapNode implements Comparable{
 	
 	/*
 	 * Lists of edges of neighbours
@@ -17,6 +17,8 @@ class MapNode {
 	 */
 	private GeographicPoint location;
 	
+	private double distance;
+	private double actualDistance;
 	/*
 	 * Constructor for this class
 	 */
@@ -57,5 +59,26 @@ class MapNode {
 		}
 		MapNode node = (MapNode)o;
 		return node.location.equals(this.location);
+	}
+	
+	public double getDistance(){
+		return distance;
+	}
+	
+	public void setDistance(double distance){
+		this.distance = distance;
+	}
+	
+	public double getActualDistance(){
+		return actualDistance;
+	}
+	
+	public void setActualDistance(double actualDistance){
+		this.actualDistance = actualDistance;
+	}
+	
+	public int compareTo(Object o){
+		MapNode m = (MapNode)o;
+		return ((Double)this.getDistance()).compareTo((Double)m.getDistance());
 	}
 }

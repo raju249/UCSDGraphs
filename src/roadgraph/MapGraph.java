@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -245,8 +246,57 @@ public class MapGraph {
 
 		// Hook for visualization.  See writeup.
 		//nodeSearched.accept(next.getLocation());
+		if (start == null || goal == null){
+			throw new NullPointerException("Null values!");
+		}
+		MapNode startNode = pointNodeMap.get(start);
+		MapNode endNode = pointNodeMap.get(goal);
+		if (startNode == null || endNode == null){
+			return null;
+		}
+		HashMap<MapNode,MapNode>parentMap = new HashMap<MapNode,MapNode>();
+		PriorityQueue<MapNode> toExplore = new PriorityQueue<MapNode>();
+		HashSet<MapNode> visited = new HashSet<MapNode>();
 		
-		return null;
+		for (MapNode node : pointNodeMap.values()){
+			node.setDistance(Double.POSITIVE_INFINITY);
+		}
+		startNode.setDistance(0);
+		
+		toExplore.add(startNode);
+		MapNode next = null;
+		int count = 0;
+		
+		while (!toExplore.isEmpty()){
+			next = toExplore.remove();
+			nodeSearched.accept(next.getLocation());
+			count++;
+			
+			if(next.equals(endNode))break;
+			if(!visited.contains(next)){
+				visited.add(next);
+				Set<MapEdge> edges = next.getEdges();
+				
+				for(MapEdge edge : edges){
+					MapNode neighbor = edge.getOtherNode(next);
+					if (!visited.contains(neighbor)){
+						
+							double curr = next.getDistance() + edge.getLength();
+							if (curr < neighbor.getDistance()){
+								toExplore.add(neighbor);
+								neighbor.setDistance(curr);
+								parentMap.put(neighbor,next);
+							}
+					}
+				}
+			}
+			
+		}
+		
+		if (!next.equals(endNode))return null;
+		
+		List<GeographicPoint> path = reconstructPath(parentMap,startNode,endNode);
+		return path;
 	}
 
 	/** Find the path from start to goal using A-Star search
@@ -278,7 +328,60 @@ public class MapGraph {
 		// Hook for visualization.  See writeup.
 		//nodeSearched.accept(next.getLocation());
 		
-		return null;
+		if (start == null || goal == null){
+			throw new NullPointerException("Null values!");
+		}
+		MapNode startNode = pointNodeMap.get(start);
+		MapNode endNode = pointNodeMap.get(goal);
+		if (startNode == null || endNode == null){
+			return null;
+		}
+		HashMap<MapNode,MapNode>parentMap = new HashMap<MapNode,MapNode>();
+		PriorityQueue<MapNode> toExplore = new PriorityQueue<MapNode>();
+		HashSet<MapNode> visited = new HashSet<MapNode>();
+		
+		for (MapNode node : pointNodeMap.values()){
+			node.setDistance(Double.POSITIVE_INFINITY);
+			node.setActualDistance(Double.POSITIVE_INFINITY);
+		}
+		startNode.setDistance(0);
+		startNode.setActualDistance(0);
+		toExplore.add(startNode);
+		MapNode next = null;
+		int count = 0;
+		
+		while (!toExplore.isEmpty()){
+			next = toExplore.remove();
+			nodeSearched.accept(next.getLocation());
+			count++;
+			
+			if(next.equals(endNode))break;
+			if(!visited.contains(next)){
+				visited.add(next);
+				Set<MapEdge> edges = next.getEdges();
+				
+				for(MapEdge edge : edges){
+					MapNode neighbor = edge.getEndNode();
+					if (!visited.contains(neighbor)){
+						
+							double curr = next.getActualDistance() + edge.getLength();
+							double preDist = curr + (neighbor.getLocation().distance(endNode.getLocation()));
+							if (preDist < neighbor.getDistance()){
+								toExplore.add(neighbor);
+								neighbor.setDistance(preDist);
+								neighbor.setActualDistance(curr);
+								parentMap.put(neighbor,next);
+							}
+					}
+				}
+			}
+			
+		}
+		
+		if (!next.equals(endNode))return null;
+		
+		List<GeographicPoint> path = reconstructPath(parentMap,startNode,endNode);
+		return path;
 	}
 
 	
