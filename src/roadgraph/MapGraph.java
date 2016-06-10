@@ -391,24 +391,29 @@ public class MapGraph {
 	public static void main(String[] args)
 	{
 		//System.out.print("Making a new map...");
-		//MapGraph theMap = new MapGraph();
+		MapGraph theMap = new MapGraph();
 		//System.out.print("DONE. \nLoading the map...");
-		//GraphLoader.loadRoadMap("data/testdata/simpletest.map", theMap);
-		//System.out.println("DONE.");
+		GraphLoader.loadRoadMap("data/testdata/simpletest.map", theMap);
+		System.out.println("DONE.");
 		
 		// You can use this method for testing.  
 		
 		// Use this code in Week 3 End of Week Quiz
-		MapGraph theMap = new MapGraph();
-		System.out.print("DONE. \nLoading the map...");
-		GraphLoader.loadRoadMap("data/maps/utc.map", theMap);
-		System.out.println("DONE.");
+		//MapGraph theMap = new MapGraph();
+		//System.out.print("DONE. \nLoading the map...");
+		//GraphLoader.loadRoadMap("data/maps/utc.map", theMap);
+		//System.out.println("DONE.");
 
-		GeographicPoint start = new GeographicPoint(32.8648772, -117.2254046);
-		GeographicPoint end = new GeographicPoint(32.8660691, -117.217393);
+		//GeographicPoint start = new GeographicPoint(32.8648772, -117.2254046);
+		//GeographicPoint end = new GeographicPoint(32.8660691, -117.217393);
+		GeographicPoint start = new GeographicPoint(1.0, 1.0); 
+		GeographicPoint end = new GeographicPoint(8.0, -1.0); // 
+		//List<GeographicPoint> route = theMap.bfs(start,end); // L
+		List<GeographicPoint> route = theMap.dijkstra(start,end); 
+		List<GeographicPoint> route1 = theMap.aStarSearch(start,end);
 
-		List<GeographicPoint> route = theMap.dijkstra(start,end);
-		List<GeographicPoint> route2 = theMap.aStarSearch(start,end);
+		//List<GeographicPoint> route = theMap.dijkstra(start,end);
+		//List<GeographicPoint> route2 = theMap.aStarSearch(start,end);
 
 		
 		
